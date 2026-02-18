@@ -43,6 +43,7 @@ permissions:
   packages: write
   pull-requests: write
   issues: write
+  id-token: write
 
 jobs:
   # Detect which packages have changes
@@ -381,31 +382,25 @@ jobs:
       - name: Publish ng-openapi to NPM
         if: needs.detect-changes.outputs.publish-ng-openapi == 'true' && github.event.inputs.dry_run != 'true'
         working-directory: dist/packages/ng-openapi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           echo "📦 Publishing ng-openapi version ${{ steps.version-ng-openapi.outputs.version }} with tag ${{ steps.version-ng-openapi.outputs.npm_tag }}"
-          npm publish --tag ${{ steps.version-ng-openapi.outputs.npm_tag }} --access public
+          npm publish --tag ${{ steps.version-ng-openapi.outputs.npm_tag }} --access public --provenance
           echo "✅ ng-openapi published successfully!"
 
       - name: Publish http-resource to NPM
         if: needs.detect-changes.outputs.publish-http-resource == 'true' && github.event.inputs.dry_run != 'true'
         working-directory: dist/packages/plugins/http-resource
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           echo "📦 Publishing @ng-openapi/http-resource version ${{ steps.version-http-resource.outputs.version }} with tag ${{ steps.version-http-resource.outputs.npm_tag }}"
-          npm publish --tag ${{ steps.version-http-resource.outputs.npm_tag }} --access public
+          npm publish --tag ${{ steps.version-http-resource.outputs.npm_tag }} --access public --provenance
           echo "✅ @ng-openapi/http-resource published successfully!"
 
       - name: Publish zod to NPM
         if: needs.detect-changes.outputs.publish-zod == 'true' && github.event.inputs.dry_run != 'true'
         working-directory: dist/packages/plugins/zod
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           echo "📦 Publishing @ng-openapi/zod version ${{ steps.version-zod.outputs.version }} with tag ${{ steps.version-zod.outputs.npm_tag }}"
-          npm publish --tag ${{ steps.version-zod.outputs.npm_tag }} --access public
+          npm publish --tag ${{ steps.version-zod.outputs.npm_tag }} --access public --provenance
           echo "✅ @ng-openapi/zod published successfully!"
 
       - name: Create Git tags and push
