@@ -192,7 +192,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
@@ -384,7 +384,7 @@ jobs:
         working-directory: dist/packages/ng-openapi
         run: |
           echo "📦 Publishing ng-openapi version ${{ steps.version-ng-openapi.outputs.version }} with tag ${{ steps.version-ng-openapi.outputs.npm_tag }}"
-          npm publish --tag ${{ steps.version-ng-openapi.outputs.npm_tag }} --provenance --access public
+          npm publish --tag ${{ steps.version-ng-openapi.outputs.npm_tag }}
           echo "✅ ng-openapi published successfully!"
 
       - name: Show npm debug log
@@ -396,7 +396,7 @@ jobs:
         working-directory: dist/packages/plugins/http-resource
         run: |
           echo "📦 Publishing @ng-openapi/http-resource version ${{ steps.version-http-resource.outputs.version }} with tag ${{ steps.version-http-resource.outputs.npm_tag }}"
-          npm publish --tag ${{ steps.version-http-resource.outputs.npm_tag }} --provenance --access public
+          npm publish --tag ${{ steps.version-http-resource.outputs.npm_tag }}
           echo "✅ @ng-openapi/http-resource published successfully!"
 
       - name: Publish zod to NPM
@@ -404,7 +404,7 @@ jobs:
         working-directory: dist/packages/plugins/zod
         run: |
           echo "📦 Publishing @ng-openapi/zod version ${{ steps.version-zod.outputs.version }} with tag ${{ steps.version-zod.outputs.npm_tag }}"
-          npm publish --tag ${{ steps.version-zod.outputs.npm_tag }} --provenance --access public
+          npm publish --tag ${{ steps.version-zod.outputs.npm_tag }}
           echo "✅ @ng-openapi/zod published successfully!"
 
       - name: Create Git tags and push
