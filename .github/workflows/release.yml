@@ -387,10 +387,6 @@ jobs:
           npm publish --tag ${{ steps.version-ng-openapi.outputs.npm_tag }}
           echo "✅ ng-openapi published successfully!"
 
-      - name: Show npm debug log
-        if: failure()
-        run: cat /home/runner/.npm/_logs/*.log
-
       - name: Publish http-resource to NPM
         if: needs.detect-changes.outputs.publish-http-resource == 'true' && github.event.inputs.dry_run != 'true'
         working-directory: dist/packages/plugins/http-resource
