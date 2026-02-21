@@ -132,7 +132,7 @@ let headers: HttpHeaders;
 if (options?.headers instanceof HttpHeaders) {
   headers = options.headers;
 } else {
-  headers = new HttpHeaders(requestOptions?.headers);
+  headers = new HttpHeaders(options?.headers);
 }`;
 
         if (hasCustomHeaders) {
