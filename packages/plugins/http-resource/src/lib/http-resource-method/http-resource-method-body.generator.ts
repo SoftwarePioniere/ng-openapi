@@ -67,11 +67,6 @@ ${paramMappings}`;
     private generateHeaders(context: GetMethodGenerationContext): string {
         const hasCustomHeaders = this.config.options.customHeaders;
 
-        // Always generate headers if we have custom headers or if it's multipart
-        if (!hasCustomHeaders) {
-            return "";
-        }
-
         // Use the approach that handles both HttpHeaders and plain objects
         // TODO: as Record<string, string> is temporary
         let headerCode = `
@@ -79,7 +74,7 @@ let headers: HttpHeaders;
 if (requestOptions?.headers instanceof HttpHeaders) {
   headers = requestOptions.headers;
 } else {
-  headers = new HttpHeaders(requestOptions?.headers as Record<string, string>);
+  headers = new HttpHeaders(requestOptions?.headers);
 }`;
 
         if (hasCustomHeaders) {
@@ -110,11 +105,7 @@ ${Object.entries(this.config.options.customHeaders || {})
             options.push("params");
         }
 
-        // Add headers if we generated them
-        const hasHeaders = this.config.options.customHeaders;
-        if (hasHeaders) {
-            options.push("headers");
-        }
+        options.push("headers");
 
         // Add response type if not JSON
         if (context.responseType !== "json") {

@@ -127,17 +127,12 @@ ${paramMappings}`;
     private generateHeaders(context: MethodGenerationContext): string {
         const hasCustomHeaders = this.config.options.customHeaders;
 
-        // Generate headers if we have custom headers, multipart, or url-encoded
-        if (!hasCustomHeaders && !context.isMultipart && !context.isUrlEncoded) {
-            return "";
-        }
-
         let headerCode = `
 let headers: HttpHeaders;
 if (options?.headers instanceof HttpHeaders) {
   headers = options.headers;
 } else {
-  headers = new HttpHeaders(options?.headers);
+  headers = new HttpHeaders(requestOptions?.headers);
 }`;
 
         if (hasCustomHeaders) {
@@ -163,7 +158,7 @@ headers = headers.delete('Content-Type');`;
 if (!headers.has('Content-Type')) {
   headers = headers.set('Content-Type', 'application/x-www-form-urlencoded');
 }`;
-        } else {
+        } else if (context.hasBody) {
             headerCode += `
 // Set Content-Type for JSON requests if not already set
 if (!headers.has('Content-Type')) {
@@ -267,10 +262,7 @@ ${formBodyAppends}`;
 
         options.push("observe: observe as any");
 
-        const hasHeaders = this.config.options.customHeaders || context.isMultipart || context.isUrlEncoded;
-        if (hasHeaders) {
-            options.push("headers");
-        }
+        options.push("headers");
 
         if (context.queryParams.length > 0) {
             options.push("params");
