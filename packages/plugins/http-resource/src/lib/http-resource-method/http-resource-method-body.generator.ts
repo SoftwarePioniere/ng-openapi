@@ -71,10 +71,10 @@ ${paramMappings}`;
         // TODO: as Record<string, string> is temporary
         let headerCode = `
 let headers: HttpHeaders;
-if (options?.headers instanceof HttpHeaders) {
-  headers = options.headers;
+if (requestOptions?.headers instanceof HttpHeaders) {
+  headers = requestOptions.headers;
 } else {
-  headers = new HttpHeaders(options?.headers);
+  headers = new HttpHeaders(requestOptions?.headers as Record<string, string>);
 }`;
 
         if (hasCustomHeaders) {
