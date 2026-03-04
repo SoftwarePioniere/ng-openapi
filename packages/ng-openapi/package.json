@@ -1,5 +1,5 @@
 {
-  "name": "ng-openapi",
+  "name": "@sopi/ng-openapi",
   "version": "0.2.18",
   "description": "Generate Angular services and TypeScript types from OpenAPI/Swagger specifications",
   "keywords": [

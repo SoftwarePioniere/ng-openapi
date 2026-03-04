@@ -36,10 +36,10 @@ export class HttpResourceMethodParamsGenerator {
         const pathParams = operation.parameters?.filter((p) => p.in === "path") || [];
         pathParams.forEach((param) => {
             const paramType = getTypeScriptType(param.schema || param, this.config);
-            const signalParamType = param.required ? `Signal<${paramType}>` : `Signal<${paramType} | undefined>`;
+            const signalParamType = param.required ? `Signal<${paramType} | undefined>` : `Signal<${paramType} | undefined>`;
             params.push({
                 name: camelCase(param.name),
-                type: `${signalParamType} | ${paramType}`,
+                type: `${signalParamType} | ${paramType} | undefined`,
                 hasQuestionToken: !param.required,
             });
         });

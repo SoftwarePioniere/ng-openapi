@@ -28,6 +28,14 @@ export class ZodSchemaBuilder {
             schema = this.removeReadOnlyProperties(schema);
         }
 
+        // TZ angepasst - START
+        // Check for maximum depth
+        const currentDepth = buildOptions.depth || 0;
+        if (currentDepth >= 5) {
+            return 'z.any()';
+        }
+        // TZ angepasst - STOP
+
         const type = this.resolveSchemaType(schema);
         const nullable = schema.nullable || (Array.isArray(schema.type) && schema.type.includes("null"));
 
@@ -184,9 +192,11 @@ export class ZodSchemaBuilder {
             return "z.array(z.any())";
         }
 
+        const currentDepth = buildOptions.depth || 0;
         const itemSchema = await this.buildSchema(schema.items as SwaggerDefinition | { $ref: string }, `${name}Item`, {
             ...buildOptions,
             required: true,
+            depth: currentDepth + 1
         });
 
         let zodArray = `z.array(${itemSchema})`;
@@ -207,10 +217,12 @@ export class ZodSchemaBuilder {
         name: string,
         buildOptions: BuildOptions
     ): Promise<string> {
+        const currentDepth = buildOptions.depth || 0;
+
         // Handle allOf, oneOf, anyOf
         if (schema.allOf) {
             const schemas = await Promise.all(
-                schema.allOf.map((s) => this.buildSchema(s, name, { ...buildOptions, required: true }))
+                schema.allOf.map((s) => this.buildSchema(s, name, { ...buildOptions, required: true, depth: currentDepth + 1}))
             );
             if (schemas.length === 1) {
                 return schemas[0];
@@ -224,7 +236,7 @@ export class ZodSchemaBuilder {
         if (schema.oneOf || schema.anyOf) {
             const schemas = await Promise.all(
                 (schema.oneOf || schema.anyOf || []).map((s) =>
-                    this.buildSchema(s, name, { ...buildOptions, required: true })
+                    this.buildSchema(s, name, { ...buildOptions, required: true, depth: currentDepth + 1 })
                 )
             );
             if (schemas.length === 1) {
@@ -241,6 +253,7 @@ export class ZodSchemaBuilder {
                     : await this.buildSchema(schema.additionalProperties, `${name}Value`, {
                           ...buildOptions,
                           required: true,
+                          depth: currentDepth + 1
                       });
             return `z.record(z.string(), ${valueSchema})`;
         }
@@ -254,7 +267,7 @@ export class ZodSchemaBuilder {
                 const propZodSchema = await this.buildSchema(
                     propSchema as SwaggerDefinition | { $ref: string },
                     `${name}${pascalCase(propName)}`,
-                    { ...buildOptions, required: isRequired }
+                    { ...buildOptions, required: isRequired, depth: currentDepth + 1 }
                 );
                 properties.push(`  "${propName}": ${propZodSchema}`);
             }

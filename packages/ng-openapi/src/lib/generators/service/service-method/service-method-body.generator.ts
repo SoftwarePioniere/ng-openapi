@@ -258,7 +258,7 @@ ${formBodyAppends}`;
     }
 
     private generateRequestOptions(context: MethodGenerationContext): string {
-        const options: string[] = [];
+        let options: string[] = [];
 
         options.push("observe: observe as any");
 
@@ -268,9 +268,16 @@ ${formBodyAppends}`;
             options.push("params");
         }
 
+        let responseType = null;
         if (context.responseType !== "json") {
-            options.push(`responseType: '${context.responseType}' as '${context.responseType}'`);
+            responseType = `'${context.responseType}' as '${context.responseType}'`;
         }
+
+        // Allow passing responseType via options for better flexibility, but only include it if it's explicitly set to a non-default value
+        if (responseType) {
+           responseType = ` || (${responseType})`
+        }
+        options.push("responseType: options?.responseType" + responseType);
 
         options.push("reportProgress: options?.reportProgress");
         options.push("withCredentials: options?.withCredentials");
@@ -278,7 +285,11 @@ ${formBodyAppends}`;
 
         const formattedOptions = options.filter((opt) => opt && !opt.includes("undefined")).join(",\n  ");
 
-        return `
+        const isUndefined = context.pathParams.map((param) => `(typeof ${camelCase(param.name)} === 'function' ? !${camelCase(param.name)}() : !${camelCase(param.name)})`).join(" || ") + " ? undefined : ";
+
+        // TZ TODO evtl falsch
+        // return `
+        return `return ${context.pathParams.length > 0 ? isUndefined : ""} {
 const requestOptions: any = {
   ${formattedOptions}
 };`;

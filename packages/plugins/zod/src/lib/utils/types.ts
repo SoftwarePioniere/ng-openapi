@@ -39,4 +39,5 @@ export interface BuildOptions {
     coerce?: boolean;
     strict?: boolean;
     removeReadOnly?: boolean;
+    depth?: number;
 }

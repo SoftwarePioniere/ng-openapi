@@ -107,10 +107,17 @@ ${Object.entries(this.config.options.customHeaders || {})
 
         options.push("headers");
 
+        let responseType = null;
         // Add response type if not JSON
         if (context.responseType !== "json") {
-            options.push(`responseType: '${context.responseType}' as '${context.responseType}'`);
+            responseType = `'${context.responseType}' as '${context.responseType}'`;
         }
+
+        // Allow passing responseType via options for better flexibility, but only include it if it's explicitly set to a non-default value
+        if (responseType) {
+            responseType = ` || (${responseType})`
+        }
+        options.push("responseType: options?.responseType" + responseType);
 
         // Create HttpContext with client identification - call the helper method
         options.push("context: this.createContextWithClientId(requestOptions?.context)");
