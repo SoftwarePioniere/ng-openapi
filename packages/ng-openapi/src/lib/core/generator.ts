@@ -10,10 +10,10 @@ import {
     TokenGenerator
 } from '../generators/utility';
 import { ServiceGenerator, ServiceIndexGenerator } from '../generators/service';
-import { GeneratorConfig, IPluginGeneratorClass, SwaggerParser } from '@ng-openapi/shared';
+import { GeneratorConfig, IPluginGeneratorClass, PluginRegistryEntry, SwaggerParser } from "@sopi/ng-openapi-shared";
 import * as fs from 'fs';
 import * as path from 'path';
-import { isUrl } from '@ng-openapi/shared/src/utils/functions/is-url';
+import { isUrl } from "@sopi/ng-openapi-shared";
 
 /**
  * Validates input (file or URL)
@@ -37,6 +37,22 @@ export function validateInput(inputPath: string): void {
         );
     }
 }
+
+/**
+ * Extracts plugin class and options from a plugin registry entry
+ * Supports both legacy format (just the class) and new format (object with plugin and options)
+ */
+function extractPluginInfo(entry: any): { pluginClass: IPluginGeneratorClass; pluginOptions?: Record<string, any> } {
+    if (typeof entry === 'function') {
+        // Legacy format: just the plugin class
+        return { pluginClass: entry };
+    } else if (typeof entry === 'object' && entry !== null && 'plugin' in entry) {
+        // New format: { plugin: Class, options: {...} }
+        return { pluginClass: entry.plugin, pluginOptions: entry.options };
+    }
+    throw new Error('Invalid plugin format. Expected either a class constructor or { plugin: Class, options?: {...} }');
+}
+
 
 /**
  * Generates Angular services and types from a configuration object
@@ -111,9 +127,9 @@ export async function generateFromConfig(config: GeneratorConfig): Promise<void>
         }
 
         if (config.plugins?.length) {
-            for (const plugin of config.plugins) {
-                const generatorClass = plugin as IPluginGeneratorClass;
-                const pluginGenerator = new generatorClass(swaggerParser, project, config);
+            for (const pluginEntry of config.plugins) {
+                const { pluginClass, pluginOptions } = extractPluginInfo(pluginEntry);
+                const pluginGenerator = new pluginClass(swaggerParser, project, config, pluginOptions);
                 await pluginGenerator.generate(outputPath);
             }
             console.log(`✅ Plugins are generated`);

@@ -1,6 +1,6 @@
 {
-  "name": "@ng-openapi/shared",
-  "version": "0.0.1",
+  "name": "@sopi/ng-openapi-shared",
+  "version": "0.0.2",
   "description": "Shared types and utilities for ng-openapi",
   "private": true,
   "main": "./index.js",

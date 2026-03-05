@@ -4,7 +4,7 @@ import {
     BASE_INTERCEPTOR_HEADER_COMMENT,
     getClientContextTokenName,
     getInterceptorsTokenName,
-} from "@ng-openapi/shared";
+} from "@sopi/ng-openapi-shared";
 
 export class BaseInterceptorGenerator {
     readonly #project: Project;

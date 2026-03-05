@@ -8,7 +8,7 @@ import {
     PathInfo,
     SwaggerDefinition,
     SwaggerParser,
-} from "@ng-openapi/shared";
+} from "@sopi/ng-openapi-shared";
 
 export class ServiceMethodParamsGenerator {
     private config: GeneratorConfig;

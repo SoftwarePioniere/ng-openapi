@@ -10,7 +10,7 @@ import {
     SwaggerParser,
     SwaggerSpec,
     ZOD_PLUGIN_GENERATOR_HEADER_COMMENT,
-} from "@ng-openapi/shared";
+} from "@sopi/ng-openapi-shared";
 import { ZodSchemaGenerator } from "./zod-schema.generator";
 import { ZodIndexGenerator } from "./zod-index.generator";
 import { ZodPluginOptions } from "./utils/types";

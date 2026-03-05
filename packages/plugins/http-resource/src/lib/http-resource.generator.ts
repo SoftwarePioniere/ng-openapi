@@ -12,7 +12,7 @@ import {
     PathInfo,
     SwaggerParser,
     SwaggerSpec,
-} from "@ng-openapi/shared";
+} from "@sopi/ng-openapi-shared";
 import * as path from "path";
 import { HttpResourceMethodGenerator } from "./http-resource-method.generator";
 import { HttpResourceIndexGenerator } from "./http-resource-index.generator";

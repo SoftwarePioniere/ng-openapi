@@ -5,7 +5,7 @@ import {
     ParameterDeclarationStructure,
 } from "ts-morph";
 import { HttpResourceMethodBodyGenerator, HttpResourceMethodParamsGenerator } from "./http-resource-method";
-import { camelCase, GeneratorConfig, getResponseType, pascalCase, PathInfo } from "@ng-openapi/shared";
+import { camelCase, GeneratorConfig, getResponseType, pascalCase, PathInfo } from "@sopi/ng-openapi-shared";
 
 export class HttpResourceMethodGenerator {
     private config: GeneratorConfig;

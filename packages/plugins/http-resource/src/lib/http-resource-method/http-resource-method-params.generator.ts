@@ -1,5 +1,5 @@
 import { OptionalKind, ParameterDeclarationStructure } from "ts-morph";
-import { camelCase, GeneratorConfig, getResponseType, getTypeScriptType, PathInfo } from "@ng-openapi/shared";
+import { camelCase, GeneratorConfig, getResponseType, getTypeScriptType, PathInfo } from "@sopi/ng-openapi-shared";
 
 export class HttpResourceMethodParamsGenerator {
     private config: GeneratorConfig;

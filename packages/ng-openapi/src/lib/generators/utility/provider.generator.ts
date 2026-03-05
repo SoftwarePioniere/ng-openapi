@@ -5,7 +5,7 @@ import {
     getBasePathTokenName,
     getInterceptorsTokenName,
     PROVIDER_GENERATOR_HEADER_COMMENT,
-} from "@ng-openapi/shared";
+} from "@sopi/ng-openapi-shared";
 
 export class ProviderGenerator {
     private project: Project;

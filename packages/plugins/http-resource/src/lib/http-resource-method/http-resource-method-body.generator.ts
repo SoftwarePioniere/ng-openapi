@@ -4,7 +4,7 @@ import {
     GetMethodGenerationContext,
     getResponseTypeFromResponse,
     PathInfo,
-} from "@ng-openapi/shared";
+} from "@sopi/ng-openapi-shared";
 
 export class HttpResourceMethodBodyGenerator {
     private config: GeneratorConfig;
@@ -66,6 +66,9 @@ ${paramMappings}`;
 
     private generateHeaders(context: GetMethodGenerationContext): string {
         const hasCustomHeaders = this.config.options.customHeaders;
+        if (!hasCustomHeaders) {
+            return "";
+        }
 
         // Use the approach that handles both HttpHeaders and plain objects
         // TODO: as Record<string, string> is temporary
@@ -105,26 +108,33 @@ ${Object.entries(this.config.options.customHeaders || {})
             options.push("params");
         }
 
-        options.push("headers");
+        const hasHeaders = this.config.options.customHeaders;
+        if (hasHeaders) {
+            options.push("headers");
+        }
 
-        let responseType = null;
         // Add response type if not JSON
         if (context.responseType !== "json") {
-            responseType = `'${context.responseType}' as '${context.responseType}'`;
+            options.push(`responseType: '${context.responseType}' as '${context.responseType}'`);
         }
-
-        // Allow passing responseType via options for better flexibility, but only include it if it's explicitly set to a non-default value
-        if (responseType) {
-            responseType = ` || (${responseType})`
-        }
-        options.push("responseType: options?.responseType" + responseType);
 
         // Create HttpContext with client identification - call the helper method
         options.push("context: this.createContextWithClientId(requestOptions?.context)");
 
         const formattedOptions = options.filter((opt) => opt && !opt.includes("undefined")).join(",\n  ");
-
-        return `return {
+        // CHANGE HERE - ADD
+        const isUndefined =
+            context.pathParams
+                .map(
+                    (param) =>
+                        `(typeof ${camelCase(param.name)} === 'function' ? !${camelCase(param.name)}() : !${camelCase(
+                            param.name
+                        )})`
+                )
+                .join(" || ") + " ? undefined : ";
+        // CHANGE HERE
+        // return `return {
+        return `return ${context.pathParams.length > 0 ? isUndefined : ""} {
   ${formattedOptions},
   ...requestOptions
 }`;

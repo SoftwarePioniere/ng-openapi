@@ -5,7 +5,7 @@ import {
     getResponseTypeFromResponse,
     PathInfo,
     SwaggerParser,
-} from "@ng-openapi/shared";
+} from "@sopi/ng-openapi-shared";
 import { ServiceMethodParamsGenerator } from "./service-method-params.generator";
 
 export class ServiceMethodOverloadsGenerator {

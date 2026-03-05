@@ -20,7 +20,7 @@
       "@ng-openapi/http-resource": [
         "packages/plugins/http-resource/src/index.ts"
       ],
-      "@ng-openapi/shared": [
+      "@sopi/ng-openapi-shared": [
         "packages/shared/src/index.ts"
       ],
       "@ng-openapi/zod": [

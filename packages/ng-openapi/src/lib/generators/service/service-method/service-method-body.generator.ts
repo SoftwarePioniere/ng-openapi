@@ -8,7 +8,7 @@ import {
     MethodGenerationContext,
     PathInfo,
     SwaggerParser,
-} from "@ng-openapi/shared";
+} from "@sopi/ng-openapi-shared";
 
 export class ServiceMethodBodyGenerator {
     private config: GeneratorConfig;
@@ -269,15 +269,16 @@ ${formBodyAppends}`;
         }
 
         let responseType = null;
+        // Add response type if not JSON
         if (context.responseType !== "json") {
             responseType = `'${context.responseType}' as '${context.responseType}'`;
         }
 
         // Allow passing responseType via options for better flexibility, but only include it if it's explicitly set to a non-default value
         if (responseType) {
-           responseType = ` || (${responseType})`
+            responseType = ` || (${responseType})`;
         }
-        options.push("responseType: options?.responseType" + responseType);
+        options.push("responseType: options?.responseType" + (responseType ?? ""));
 
         options.push("reportProgress: options?.reportProgress");
         options.push("withCredentials: options?.withCredentials");
@@ -285,11 +286,18 @@ ${formBodyAppends}`;
 
         const formattedOptions = options.filter((opt) => opt && !opt.includes("undefined")).join(",\n  ");
 
-        const isUndefined = context.pathParams.map((param) => `(typeof ${camelCase(param.name)} === 'function' ? !${camelCase(param.name)}() : !${camelCase(param.name)})`).join(" || ") + " ? undefined : ";
-
+        const isUndefined =
+            context.pathParams
+                .map(
+                    (param) =>
+                        `(typeof ${camelCase(param.name)} === 'function' ? !${camelCase(param.name)}() : !${camelCase(
+                            param.name
+                        )})`
+                )
+                .join(" || ") + " ? undefined : ";
         // TZ TODO evtl falsch
-        // return `
-        return `return ${context.pathParams.length > 0 ? isUndefined : ""} {
+        // return `return ${context.pathParams.length > 0 ? isUndefined : ""} {
+        return `
 const requestOptions: any = {
   ${formattedOptions}
 };`;

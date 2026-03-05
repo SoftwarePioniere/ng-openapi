@@ -3,6 +3,23 @@ import { HttpInterceptor } from "@angular/common/http";
 import { SwaggerSpec } from "./swagger.types";
 import { IPluginGenerator } from "./plugin.types";
 
+/**
+ * Plugin registry entry - supports both legacy format (just the class)
+ * and new format with options
+ */
+export type PluginRegistryEntry =
+    | (new (...args: any) => IPluginGenerator)
+    | { plugin: new (...args: any) => IPluginGenerator; options?: Record<string, any> };
+
+/**
+ * Type guard to detect if plugin entry uses the new format with options
+ */
+export function isNewPluginFormat(
+    entry: any
+): entry is { plugin: new (...args: any) => IPluginGenerator; options?: Record<string, any> } {
+    return typeof entry === "object" && entry !== null && "plugin" in entry;
+}
+
 export interface GeneratorConfig {
     input: string;
     output: string;
@@ -28,7 +45,7 @@ export interface GeneratorConfig {
         module?: ModuleKind;
         strict?: boolean;
     };
-    plugins?: (new (...args: any) => IPluginGenerator)[];
+    plugins?: PluginRegistryEntry[];
 }
 
 // Multi-client configuration for providers

@@ -10,7 +10,7 @@ export default defineConfig([
         sourcemap: true,
         clean: true,
         outDir: "../../../dist/packages/plugins/http-resource",
-        external: ["@angular/core", "@angular/common", "ng-openapi", "ts-morph"],
+        external: ["@angular/core", "@angular/common", "@sopi/ng-openapi", "ts-morph"],
         onSuccess: async () => {
             const distDir = "../../../dist/packages/plugins/http-resource";
 

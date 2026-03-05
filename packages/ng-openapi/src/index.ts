@@ -1,2 +1,2 @@
 export * from "./lib/core";
-export * from "@ng-openapi/shared";
+export * from "@sopi/ng-openapi-shared";

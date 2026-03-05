@@ -1,7 +1,7 @@
 import { Project } from "ts-morph";
 import * as fs from "fs";
 import * as path from "path";
-import { ZOD_PLUGIN_INDEX_GENERATOR_HEADER_COMMENT } from "@ng-openapi/shared";
+import { ZOD_PLUGIN_INDEX_GENERATOR_HEADER_COMMENT } from "@sopi/ng-openapi-shared";
 
 export class ZodIndexGenerator {
     private project: Project;

@@ -4,7 +4,7 @@ import {
     ServiceMethodOverloadsGenerator,
     ServiceMethodParamsGenerator,
 } from "./service-method";
-import { camelCase, GeneratorConfig, pascalCase, PathInfo, SwaggerParser } from "@ng-openapi/shared";
+import { camelCase, GeneratorConfig, pascalCase, PathInfo, SwaggerParser } from "@sopi/ng-openapi-shared";
 
 export class ServiceMethodGenerator {
     private config: GeneratorConfig;

@@ -31,7 +31,7 @@ endpoints.
 ## Installation
 
 ```bash
-npm install @ng-openapi/http-resource ng-openapi --save-dev
+npm install @sopi/ng-openapi-http-resource @sopi/ng-openapi --save-dev
 ```
 
 ## Quick Start
@@ -40,8 +40,8 @@ npm install @ng-openapi/http-resource ng-openapi --save-dev
 
 ```typescript
 // openapi.config.ts
-import { GeneratorConfig } from 'ng-openapi';
-import { HttpResourcePlugin } from '@ng-openapi/http-resource';
+import { GeneratorConfig } from '@sopi/ng-openapi';
+import { HttpResourcePlugin } from '@sopi/ng-openapi-http-resource';
 
 export default {
   input: './swagger.json',

@@ -9,7 +9,7 @@ import {
     SwaggerDefinition,
     SwaggerParser,
     SwaggerResponse,
-} from "@ng-openapi/shared";
+} from "@sopi/ng-openapi-shared";
 import { ZodSchemaBuilder } from "./zod-schema.builder";
 import { ZodPluginOptions } from "./utils/types";
 import { isReferenceObject } from "./utils/is-reference-object";

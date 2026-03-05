@@ -1,4 +1,4 @@
-import { GeneratorConfig, pascalCase, SwaggerDefinition, SwaggerParser } from "@ng-openapi/shared";
+import { GeneratorConfig, pascalCase, SwaggerDefinition, SwaggerParser } from "@sopi/ng-openapi-shared";
 import { BuildOptions, ZodPluginOptions } from "./utils/types";
 import { isReferenceObject } from "./utils/is-reference-object";
 
@@ -31,7 +31,7 @@ export class ZodSchemaBuilder {
         // TZ angepasst - START
         // Check for maximum depth
         const currentDepth = buildOptions.depth || 0;
-        if (currentDepth >= 5) {
+        if (currentDepth >= 20) {
             return 'z.any()';
         }
         // TZ angepasst - STOP
@@ -96,30 +96,31 @@ export class ZodSchemaBuilder {
                     if (this.config.options?.dateType === "Date") {
                         return buildOptions.coerce ? "z.coerce.date()" : "z.date()";
                     }
-                    return buildOptions.coerce ? "z.coerce.string().date()" : "z.string().date()";
+                    return buildOptions.coerce ? "z.coerce.string().pipe(z.date())" : "z.iso.date()";
                 case "date-time": {
                     if (this.config.options?.dateType === "Date") {
                         return buildOptions.coerce ? "z.coerce.date()" : "z.date()";
                     }
-                    const datetimeOptions = this.options.dateTime ? `, ${JSON.stringify(this.options.dateTime)}` : "";
+
+                    const datetimeOptions = this.options.dateTime ? `${JSON.stringify(this.options.dateTime)}` : "";
                     return buildOptions.coerce
-                        ? `z.coerce.string().datetime(${datetimeOptions})`
-                        : `z.string().datetime(${datetimeOptions})`;
+                        ? `z.coerce.string().pipe(z.iso.datetime(${datetimeOptions}))`
+                        : `z.iso.datetime(${datetimeOptions})`;
                 }
                 case "time": {
                     const timeOptions = this.options.time ? `, ${JSON.stringify(this.options.time)}` : "";
                     return buildOptions.coerce
-                        ? `z.coerce.string().time(${timeOptions})`
-                        : `z.string().time(${timeOptions})`;
+                        ? `z.coerce.string().pipe(z.iso.time(${timeOptions}))`
+                        : `z.iso.time(${timeOptions})`;
                 }
                 case "email":
-                    return buildOptions.coerce ? "z.coerce.string().email()" : "z.string().email()";
+                    return buildOptions.coerce ? "z.coerce.string().pipe(z.email())" : "z.email()";
                 case "uri":
                 case "url":
                 case "hostname":
-                    return buildOptions.coerce ? "z.coerce.string().url()" : "z.string().url()";
+                    return buildOptions.coerce ? "z.coerce.string().pipe(z.url())" : "z.url()";
                 case "uuid":
-                    return buildOptions.coerce ? "z.coerce.string().uuid()" : "z.string().uuid()";
+                    return buildOptions.coerce ? "z.coerce.string().pipe(z.uuid())" : "z.uuid()";
                 case "binary":
                     return "z.instanceof(File)";
             }

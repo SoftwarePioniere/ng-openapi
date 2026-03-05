@@ -11,7 +11,7 @@ import {
     SERVICE_GENERATOR_HEADER_COMMENT,
     SwaggerParser,
     SwaggerSpec,
-} from "@ng-openapi/shared";
+} from "@sopi/ng-openapi-shared";
 import * as path from "path";
 import { ServiceMethodGenerator } from "./service-method.generator";
 

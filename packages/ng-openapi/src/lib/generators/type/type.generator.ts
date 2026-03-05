@@ -6,7 +6,7 @@ import {
     SwaggerDefinition,
     SwaggerParser,
     TYPE_GENERATOR_HEADER_COMMENT,
-} from "@ng-openapi/shared";
+} from "@sopi/ng-openapi-shared";
 import {
     EnumMemberStructure,
     OptionalKind,

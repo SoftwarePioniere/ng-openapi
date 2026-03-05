@@ -1,7 +1,7 @@
 {
   "name": "@sopi/ng-openapi-http-resource",
-  "version": "0.0.30",
-  "description": "HTTP Resource plugin for ng-openapi - Angular HTTP utilities with caching and state management",
+  "version": "0.0.34",
+  "description": "HTTP Resource plugin for @sopi/ng-openapi - Angular HTTP utilities with caching and state management",
   "keywords": [
     "angular",
     "ng-openapi",
@@ -63,7 +63,7 @@
   "peerDependencies": {
     "@angular/core": ">=19.2",
     "@angular/common": ">=19.2",
-    "ng-openapi": ">=0.1",
+    "@sopi/ng-openapi": ">=0.1",
     "ts-morph": "*"
   },
   "peerDependenciesMeta": {
@@ -73,7 +73,7 @@
     "@angular/common": {
       "optional": false
     },
-    "ng-openapi": {
+    "@sopi/ng-openapi": {
       "optional": false
     },
     "ts-morph": {
