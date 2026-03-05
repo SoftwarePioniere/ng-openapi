@@ -12,6 +12,7 @@ export interface GeneratorConfig {
         dateType: "string" | "Date";
         enumStyle: "enum" | "union";
         validation?: {
+            request?: boolean;
             response?: boolean;
         };
         generateServices?: boolean;
