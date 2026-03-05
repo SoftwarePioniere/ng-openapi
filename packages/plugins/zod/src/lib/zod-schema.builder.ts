@@ -31,7 +31,7 @@ export class ZodSchemaBuilder {
         // TZ angepasst - START
         // Check for maximum depth
         const currentDepth = buildOptions.depth || 0;
-        if (currentDepth >= 20) {
+        if (currentDepth >= 8) {
             return 'z.any()';
         }
         // TZ angepasst - STOP
