@@ -1,6 +1,7 @@
 import { MethodDeclarationOverloadStructure, OptionalKind, ParameterDeclarationStructure } from "ts-morph";
 import {
     GeneratorConfig,
+    generateParseRequestTypeParams,
     getResponseType,
     getResponseTypeFromResponse,
     PathInfo,
@@ -118,16 +119,16 @@ export class ServiceMethodOverloadsGenerator {
         params: OptionalKind<ParameterDeclarationStructure>[],
         responseType: "json" | "arraybuffer" | "blob" | "text"
     ): string {
-        const { response } = this.config.options.validation ?? {};
-        // const parseRequest = request ? generateParseRequestTypeParams(params) : "";
+        const { response, request } = this.config.options.validation ?? {};
+        const parseRequest = request ? generateParseRequestTypeParams(params) : "";
 
         const additionalTypeParameters = [];
         if (response) {
             additionalTypeParameters.push(this.responseDataType);
         }
-        // if (request && parseRequest) {
-        //     additionalTypeParameters.push(parseRequest);
-        // }
+        if (request && parseRequest) {
+            additionalTypeParameters.push(parseRequest);
+        }
 
         if (additionalTypeParameters.length === 0) {
             return `RequestOptions<'${responseType}'>`;

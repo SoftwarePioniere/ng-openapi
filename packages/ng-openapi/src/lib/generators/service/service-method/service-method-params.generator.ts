@@ -3,6 +3,7 @@ import {
     camelCase,
     CONTENT_TYPES,
     GeneratorConfig,
+    generateParseRequestTypeParams,
     getTypeScriptType,
     isDataTypeInterface,
     PathInfo,
@@ -114,16 +115,16 @@ export class ServiceMethodParamsGenerator {
     }
 
     private getHttpRequestOptionsParameter(params: OptionalKind<ParameterDeclarationStructure>[]): string {
-        const { response } = this.config.options.validation ?? {};
-        // const parseRequest = request ? generateParseRequestTypeParams(params) : "";
+        const { response, request } = this.config.options.validation ?? {};
+        const parseRequest = request ? generateParseRequestTypeParams(params) : "";
 
         const additionalTypeParameters = [];
         if (response) {
             additionalTypeParameters.push("any");
         }
-        // if (request && parseRequest) {
-        //     additionalTypeParameters.push(parseRequest);
-        // }
+        if (request && parseRequest) {
+            additionalTypeParameters.push(parseRequest);
+        }
 
         if (additionalTypeParameters.length === 0) {
             return `RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>`;
