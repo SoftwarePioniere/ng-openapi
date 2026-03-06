@@ -230,18 +230,21 @@ Add these scripts to your `package.json`:
 
 ```shell
 
-# Konfiguration
-Es muss als erstes das repo im .npmrc konfiguriert werden, damit die Pakete gepublished werden können. Außerdem muss in der user .nmprc die E-Mail-Adresse und der Auth-Token konfiguriert werden, damit die Pakete gepublished werden können.
+# Configuration of the npm registry for publishing packages to npm and SOPI.
+First, the repo must be configured in .npmrc so that the packages can be published. In addition, the email address and auth token must be configured in the user .nmprc so that the packages can be published.
 
-# neue version local erstellen
-npm run localtestpublish
+registry=https://registry.npmjs.com/
+always-auth=false
 
-# local testen: erst "npm run build", danach den gewünschten wählen bei "direkt ausführen"
+// LOCAL (local-registry per nx starten)
+@sopi:registry=http://localhost:4873/
+always-auth=true
 
-# new version and build and publish
-npm version patch --no-git-tag-version --no-commit-hooks
-npm run build
-npm pack
-npm publish
+// SOPI
+@sopi:registry=https://... Configure the SOPI registry here!!!
+always-auth=true
+
+
+legacy-peer-deps=true
 
 ```
