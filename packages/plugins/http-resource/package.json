@@ -1,6 +1,6 @@
 {
   "name": "@sopi/ng-openapi-http-resource",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "description": "HTTP Resource plugin for @sopi/ng-openapi - Angular HTTP utilities with caching and state management",
   "keywords": [
     "angular",

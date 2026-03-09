@@ -328,6 +328,13 @@ export class TypeGenerator {
     }
 
     private resolveSwaggerType(schema: SwaggerDefinition): string {
+        // TODO: Handle nullable arrays defined as type: ["null", "array"] or ["array", "null"] :: Das muss wieder raus
+        schema.type =
+            (schema?.type?.[0] === "null" && schema?.type?.[1] === "array") ||
+            (schema?.type?.[0] === "array" && schema?.type?.[1] === "null")
+                ? "array"
+                : schema.type;
+
         if (schema.$ref) {
             return this.resolveReference(schema.$ref);
         }
@@ -351,7 +358,9 @@ export class TypeGenerator {
             return (
                 schema.oneOf
                     .map((def) => this.resolveSwaggerTypeCached(def))
-                    .filter((type, index, array) => type !== "any" && type !== "unknown" && array.indexOf(type) === index)
+                    .filter(
+                        (type, index, array) => type !== "any" && type !== "unknown" && array.indexOf(type) === index
+                    )
                     .join(" | ") || "unknown"
             );
         }
