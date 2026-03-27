@@ -86,7 +86,7 @@ export class TypeGenerator {
     private collectTypeStructure(name: string, definition: SwaggerDefinition): void {
         const interfaceName = this.getCachedPascalCase(name) ?? "";
 
-        if (definition.enum) {
+        if (definition.enum || (definition.type === "string" && definition.oneOf?.length)) {
             this.collectEnumStructure(interfaceName, definition);
         } else if (definition.allOf) {
             this.collectCompositeTypeStructure(interfaceName, definition);
@@ -101,37 +101,50 @@ export class TypeGenerator {
                 name: interfaceName,
                 isExported: true,
                 docs: definition.description ? [definition.description] : undefined,
-                type: propertyType
+                type: propertyType,
             });
         }
     }
 
     private collectEnumStructure(name: string, definition: SwaggerDefinition): void {
-        if (!definition.enum?.length) return;
-        const docs =
-            !this.config.options.generateEnumBasedOnDescription && definition.description
-                ? [definition.description]
-                : undefined;
+        if (definition.enum?.length) {
+            const docs =
+                !this.config.options.generateEnumBasedOnDescription && definition.description
+                    ? [definition.description]
+                    : undefined;
 
-        if (this.config.options.enumStyle === "enum") {
+            if (this.config.options.enumStyle === "enum") {
+                const statement = this.buildEnumAsEnum(name, definition, docs);
+                this.statements.push(...statement);
+            } else {
+                const statement = this.buildEnumAsUnion(name, definition, docs);
+                this.statements.push(...statement);
+            }
+        } else if (definition.oneOf?.length) {
+            const docs =
+                !this.config.options.generateEnumBasedOnDescription && definition.description
+                    ? [definition.description]
+                    : void 0;
             const statement = this.buildEnumAsEnum(name, definition, docs);
-            this.statements.push(...statement);
-        } else {
-            const statement = this.buildEnumAsUnion(name, definition, docs);
             this.statements.push(...statement);
         }
     }
 
     private buildEnumAsEnum(name: string, definition: SwaggerDefinition, docs?: string[]): StatementStructures[] {
-        if (!definition.enum?.length) throw Error("Enum definition has no values");
+        if (!(definition.enum?.length || definition.oneOf?.length)) throw Error("Enum definition has no values");
         const statements: StatementStructures[] = [];
-        const isStringEnum = definition.enum.some((value) => typeof value === "string");
+        const isStringEnum = definition.enum?.some((value) => typeof value === "string") ?? definition.type === "string";
 
         if (isStringEnum) {
-            const members: OptionalKind<EnumMemberStructure>[] = definition.enum.map((value) => ({
-                name: this.toEnumKey(value),
-                value: `${String(value)}`,
-            }));
+            const members: OptionalKind<EnumMemberStructure>[] =
+                definition.enum?.map((value) => ({
+                    name: this.toEnumKey(value),
+                    value: `${String(value)}`,
+                })) ??
+                definition?.oneOf?.map((value) => ({
+                    name: value.title ? this.toEnumKey(value.title) : "NameNotFound",
+                    value: value.const ? `${String(value.const)}` : 'ConstNotFound',
+                })) ?? [];
 
             statements.push({
                 kind: StructureKind.Enum,

@@ -76,6 +76,7 @@ export interface SwaggerDefinition {
     required?: string[] | undefined;
     oneOf?: SwaggerDefinition[];
     anyOf?: SwaggerDefinition[];
+    const?: string | number | boolean | undefined;
 }
 
 export interface SwaggerSpec {
