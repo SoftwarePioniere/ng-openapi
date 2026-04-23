@@ -27,13 +27,12 @@ export class ZodSchemaGenerator {
         this.schemaBuilder = new ZodSchemaBuilder(parser, config, options);
     }
 
-    async generateParametersValidator(parameters: Parameter[], operationName: string, suffix: string): Promise<string> {
+    async generateParametersValidator(parameters: Parameter[], operationName: string, suffix: string, tags?: string[]): Promise<string> {
         const properties: Record<string, string> = {};
-        const requiredFields: string[] = [];
 
         for (const param of parameters) {
             const schema = this.resolveParameterSchema(param);
-            const zodSchema = await this.schemaBuilder.buildSchema(
+            properties[param.name] = await this.schemaBuilder.buildSchema(
                 schema,
                 camelCase(`${operationName}-${param.name}`),
                 {
@@ -42,14 +41,9 @@ export class ZodSchemaGenerator {
                     strict: this.isStrict(param.in as "path" | "query" | "header"),
                 }
             );
-
-            properties[param.name] = zodSchema;
-            if (param.required) {
-                requiredFields.push(param.name);
-            }
         }
 
-        return this.generateObjectValidator(operationName + suffix, properties);
+        return this.generateObjectValidator(operationName + suffix, properties, tags, operationName);
     }
 
     async generateBodyValidator(operation: PathInfo, operationName: string): Promise<string[]> {
@@ -68,6 +62,8 @@ export class ZodSchemaGenerator {
 
         const schema = this.resolveSchema(content.schema);
         const bodyName = `${operationName}Body`;
+        const tags = operation.tags;
+        const describeText = tags && tags.length > 0 ? `${tags[0]}.${operationName}` : operationName;
 
         // Check if it's an array
         if (schema.type === "array" && schema.items) {
@@ -98,7 +94,9 @@ export class ZodSchemaGenerator {
                 removeReadOnly: true,
             });
 
-            statements.push(`export const ${bodyName} = ${validator};`);
+            // Add describe if it is an object type
+            const describedValidator = schema.type === "object" ? `${validator}.describe('${describeText}')` : validator;
+            statements.push(`export const ${bodyName} = ${describedValidator};`);
             statements.push(`export type ${pascalCase(bodyName)} = z.infer<typeof ${bodyName}>;`);
         }
 
@@ -113,6 +111,7 @@ export class ZodSchemaGenerator {
         }
 
         const responsesToGenerate = Object.entries(operation.responses);
+        const tags = operation.tags;
 
         for (const [statusCode, response] of responsesToGenerate) {
             if (!response) continue;
@@ -124,6 +123,7 @@ export class ZodSchemaGenerator {
 
             const schema = this.resolveSchema(content.schema);
             const responseName = statusCode ? `${operationName}${statusCode}Response` : `${operationName}Response`;
+            const describeText = tags && tags.length > 0 ? `${tags[0]}.${operationName}` : operationName;
 
             // Check if it's an array
             if (schema.type === "array" && schema.items) {
@@ -153,7 +153,9 @@ export class ZodSchemaGenerator {
                     strict: this.isStrict("response"),
                 });
 
-                statements.push(`export const ${responseName} = ${validator};`);
+                // Add describe if it is an object type
+                const describedValidator = schema.type === "object" ? `${validator}.describe('${describeText}')` : validator;
+                statements.push(`export const ${responseName} = ${describedValidator};`);
                 statements.push(`export type ${pascalCase(responseName)} = z.infer<typeof ${responseName}>;`);
             }
         }
@@ -161,7 +163,7 @@ export class ZodSchemaGenerator {
         return statements;
     }
 
-    private generateObjectValidator(name: string, properties: Record<string, string>): string {
+    private generateObjectValidator(name: string, properties: Record<string, string>, tags?: string[], operationName?: string): string {
         if (Object.keys(properties).length === 0) {
             return `export const ${name} = z.object({});`;
         }
@@ -170,10 +172,23 @@ export class ZodSchemaGenerator {
             .map(([key, schema]) => `  "${key}": ${schema}`)
             .join(",\n");
 
+        // Build the describe text from tags and operation name
+        let describeText = "";
+        if (tags && tags.length > 0 && operationName) {
+            // Format: "Tag.operationName"
+            describeText = `${tags[0]}.${operationName}`;
+        } else if (tags && tags.length > 0) {
+            describeText = tags[0];
+        } else if (operationName) {
+            describeText = operationName;
+        }
+
+        const describeChain = describeText ? `.describe('${describeText}')` : "";
+
         const statements = [
             `export const ${name} = z.object({`,
             props,
-            "});",
+            `})${describeChain};`,
             `export type ${pascalCase(name)} = z.infer<typeof ${name}>;`,
         ];
 

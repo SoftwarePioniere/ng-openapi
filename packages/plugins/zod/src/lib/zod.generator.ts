@@ -160,6 +160,7 @@ export class ZodGenerator implements IPluginGenerator {
 
     private async generateParameterValidators(operation: PathInfo, operationName: string): Promise<string[]> {
         const statements: string[] = [];
+        const tags = operation.tags;
 
         // Group parameters by type
         const pathParams = operation.parameters?.filter((p) => p.in === "path") || [];
@@ -171,7 +172,8 @@ export class ZodGenerator implements IPluginGenerator {
             const validator = await this.schemaGenerator.generateParametersValidator(
                 pathParams,
                 operationName,
-                "Params"
+                "Params",
+                tags
             );
             if (validator) {
                 statements.push(validator);
@@ -183,7 +185,8 @@ export class ZodGenerator implements IPluginGenerator {
             const validator = await this.schemaGenerator.generateParametersValidator(
                 queryParams,
                 operationName,
-                "QueryParams"
+                "QueryParams",
+                tags
             );
             if (validator) {
                 statements.push(validator);
@@ -195,7 +198,8 @@ export class ZodGenerator implements IPluginGenerator {
             const validator = await this.schemaGenerator.generateParametersValidator(
                 headerParams,
                 operationName,
-                "Headers"
+                "Headers",
+                tags
             );
             if (validator) {
                 statements.push(validator);
